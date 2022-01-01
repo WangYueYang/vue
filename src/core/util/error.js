@@ -42,6 +42,7 @@ export function invokeWithErrorHandling (
 ) {
   let res
   try {
+    // 这里执行 vue 的生命周期函数并且this指向vue
     res = args ? handler.apply(context, args) : handler.call(context)
     if (res && !res._isVue && isPromise(res) && !res._handled) {
       res.catch(e => handleError(e, vm, info + ` (Promise/async)`))

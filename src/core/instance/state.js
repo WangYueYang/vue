@@ -112,9 +112,11 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 这里判断 data 是不是一个函数
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
+  // isPlainObject 判断 data 是不是一个对象
   if (!isPlainObject(data)) {
     data = {}
     process.env.NODE_ENV !== 'production' && warn(
@@ -123,11 +125,13 @@ function initData (vm: Component) {
       vm
     )
   }
+
   // proxy data on instance
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  // data 的 key 不能和 props，method 的名字重复
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -156,6 +160,7 @@ export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
   pushTarget()
   try {
+    // 如果是一个函数的话，返回 data，this指向 vue
     return data.call(vm, vm)
   } catch (e) {
     handleError(e, vm, `data()`)
@@ -323,6 +328,7 @@ export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
+  console.log('stateMixin')
   const dataDef = {}
   dataDef.get = function () { return this._data }
   const propsDef = {}

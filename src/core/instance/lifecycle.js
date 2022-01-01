@@ -41,6 +41,7 @@ export function initLifecycle (vm: Component) {
     parent.$children.push(vm)
   }
 
+  // vue 的 实例 property
   vm.$parent = parent
   vm.$root = parent ? parent.$root : vm
 
@@ -337,6 +338,7 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
 export function callHook (vm: Component, hook: string) {
   // #7573 disable dep collection when invoking lifecycle hooks
   pushTarget()
+  // handlers 是 options 上的生命周期函数， typof handlers 是一个数组
   const handlers = vm.$options[hook]
   const info = `${hook} hook`
   if (handlers) {
@@ -347,5 +349,6 @@ export function callHook (vm: Component, hook: string) {
   if (vm._hasHookEvent) {
     vm.$emit('hook:' + hook)
   }
+  // console.log('生命周期： ', info,Array.isArray(vm.$options[hook]))
   popTarget()
 }

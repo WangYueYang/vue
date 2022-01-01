@@ -13,6 +13,7 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  console.log('inint mixin')
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
@@ -28,6 +29,7 @@ export function initMixin (Vue: Class<Component>) {
 
     // a flag to avoid this being observed
     vm._isVue = true
+    // 合并 new Vue 参数
     // merge options
     if (options && options._isComponent) {
       // optimize internal component instantiation
@@ -49,13 +51,21 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    // 一堆init， vue 生命周期 beforeCreate created
+    // 初始化了一些 vue 的 实例 property
     initLifecycle(vm)
     initEvents(vm)
+    // 初始化 render
     initRender(vm)
+    // 生命周期
     callHook(vm, 'beforeCreate')
+    // provide / inject 的初始化？
     initInjections(vm) // resolve injections before data/props
+    // 对 props, methods, data, computed, watch 的初始化
     initState(vm)
+    // provide / inject
     initProvide(vm) // resolve provide after data/props
+    // created
     callHook(vm, 'created')
 
     /* istanbul ignore if */
@@ -65,6 +75,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
 
+    // 如果 有 el 参数的话就 mount 挂载 vue 组件
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
@@ -92,6 +103,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  // 如果有 vue.super 的话进去，没有直接返回 vue.options
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
