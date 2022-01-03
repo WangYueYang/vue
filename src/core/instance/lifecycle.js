@@ -57,12 +57,15 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  // render函数执行以后会生成虚拟节点Vnode，Vnode以参数传入_update方法，此方法的作用就是更新或渲染真实的dom节点
+  // 记个重点，回头再来看
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const restoreActiveInstance = setActiveInstance(vm)
     vm._vnode = vnode
+
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
@@ -72,6 +75,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
       // updates
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
+
     restoreActiveInstance()
     // update __vue__ reference
     if (prevEl) {
@@ -80,6 +84,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     if (vm.$el) {
       vm.$el.__vue__ = vm
     }
+
     // if parent is an HOC, update its $el as well
     if (vm.$vnode && vm.$parent && vm.$vnode === vm.$parent._vnode) {
       vm.$parent.$el = vm.$el
@@ -88,6 +93,8 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // updated in a parent's updated hook.
   }
 
+  // 迫使 Vue 实例重新渲染。注意它仅仅影响实例本身和插入插槽内容的子组件，而不是所有子组件
+  // 调用 vm._watcher.update()
   Vue.prototype.$forceUpdate = function () {
     const vm: Component = this
     if (vm._watcher) {
@@ -95,6 +102,8 @@ export function lifecycleMixin (Vue: Class<Component>) {
     }
   }
 
+  // 完全销毁一个实例。清理它与其它实例的连接，解绑它的全部指令及事件监听器
+  // 这里出发 beforeDestory 和 destroyed 生命周期
   Vue.prototype.$destroy = function () {
     const vm: Component = this
     if (vm._isBeingDestroyed) {
@@ -349,6 +358,6 @@ export function callHook (vm: Component, hook: string) {
   if (vm._hasHookEvent) {
     vm.$emit('hook:' + hook)
   }
-  // console.log('生命周期： ', info,Array.isArray(vm.$options[hook]))
+  console.log('生命周期： ', info,Array.isArray(vm.$options[hook]))
   popTarget()
 }

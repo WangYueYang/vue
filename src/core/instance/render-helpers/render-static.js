@@ -37,6 +37,11 @@ export function markOnce (
   return tree
 }
 
+/*
+ * 为 VNode 打静态标记，在 VNode 上添加三个属性：
+ * { isStatick: true, key: xx, isOnce: true or false } 
+ */
+
 function markStatic (
   tree: VNode | Array<VNode>,
   key: string,
@@ -53,6 +58,9 @@ function markStatic (
   }
 }
 
+/*
+ * 标记静态 VNode
+ */
 function markStaticNode (node, key, isOnce) {
   node.isStatic = true
   node.key = key

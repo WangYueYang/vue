@@ -204,16 +204,23 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   ) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 判断 target 是否是一个数组，key 是不是正确的数组下标
   if (Array.isArray(target) && isValidArrayIndex(key)) {
+    // target.length和key取一个最大值
     target.length = Math.max(target.length, key)
+    // 通过 splice 改变现有数组
     target.splice(key, 1, val)
     return val
   }
+
+  // key in target 判断 key 是不是 target里的属性, 
+  // key 是 target 上的属性，并且不是 Object.prototype 上的属性
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
   }
-  const ob = (target: any).__ob__
+  // __ob__ 和 Observer 有关系 
+  const ob = (target: any).__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
@@ -221,10 +228,14 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     )
     return val
   }
+
+  // 添加 target 上没有的属性
   if (!ob) {
     target[key] = val
     return val
   }
+
+  // defineReactive 修改 vue 坚挺的数据
   defineReactive(ob.value, key, val)
   ob.dep.notify()
   return val
@@ -233,6 +244,7 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
 /**
  * Delete a property and trigger change if necessary.
  */
+// 和 set 实现方法一样
 export function del (target: Array<any> | Object, key: any) {
   if (process.env.NODE_ENV !== 'production' &&
     (isUndef(target) || isPrimitive(target))

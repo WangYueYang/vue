@@ -6,10 +6,11 @@ import { handleError } from './error'
 import { isIE, isIOS, isNative } from './env'
 
 export let isUsingMicroTask = false
-
+// !比较重要，没看懂，后面再看，和js的人物队列有关系
 const callbacks = []
 let pending = false
 
+// 把nexttick的cb添加到 callbacks 这个数组里, 执行 timerFunc 的时候执行 flushCallbacks,
 function flushCallbacks () {
   pending = false
   const copies = callbacks.slice(0)

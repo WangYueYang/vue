@@ -8,19 +8,29 @@
     <script src="../dist/vue.js"></script>
   </head>
   <body>
-    <div id="app">{{msg}}</div>
+    <div id="app">
+      {{msg}}
+      <p v-for="item in arr">
+        {{item}}
+      </p>
+    </div>
     <script>
-      new Vue({
+      var vm = new Vue({
         el: '#app',
         data: {
-          msg: 'hello word123'
+          msg: 'hello word123',
+          arr: [1 ,2],
+          nObj: {
+            constructor: '123'
+          }
         },
-        template: '<div>{{msg}}</div>',
+        // template: '<div>{{msg}}</div>',
         mounted() {
         },
         created() {
         }
       });
+      console.log(vm.$data, '$data')
     </script>
   </body>
 </html>

@@ -328,11 +328,12 @@ export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
-  console.log('stateMixin')
   const dataDef = {}
   dataDef.get = function () { return this._data }
   const propsDef = {}
   propsDef.get = function () { return this._props }
+
+  // 不让 set vue data 和 props
   if (process.env.NODE_ENV !== 'production') {
     dataDef.set = function () {
       warn(
@@ -345,9 +346,18 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+
+
+  // Object.defineProperty(Vue.prototype, '$data', {
+  //   get() { return this._data}
+  // })
+  // Object.defineProperty(Vue.prototype, '$props', {
+  //   get() { return this._props}
+  // })
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
+  // observer/index 的 set 和 del 函数 挂载到 Vue.prototype 上
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
@@ -357,11 +367,14 @@ export function stateMixin (Vue: Class<Component>) {
     options?: Object
   ): Function {
     const vm: Component = this
+
     if (isPlainObject(cb)) {
+      // 执行 vm.$watch
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
     options.user = true
+    // new Watcher 监听变化
     const watcher = new Watcher(vm, expOrFn, cb, options)
     if (options.immediate) {
       const info = `callback for immediate watcher "${watcher.expression}"`
@@ -369,6 +382,8 @@ export function stateMixin (Vue: Class<Component>) {
       invokeWithErrorHandling(cb, vm, [watcher.value], vm, info)
       popTarget()
     }
+
+    // 返回结束坚挺
     return function unwatchFn () {
       watcher.teardown()
     }

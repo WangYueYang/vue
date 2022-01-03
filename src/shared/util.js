@@ -55,6 +55,7 @@ export function toRawType (value: any): string {
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
+// isPlainObject 判断是不是一个 Object
 export function isPlainObject (obj: any): boolean {
   return _toString.call(obj) === '[object Object]'
 }
@@ -66,8 +67,12 @@ export function isRegExp (v: any): boolean {
 /**
  * Check if val is a valid array index.
  */
+// 判断 val 大于0，并且是个整数和有限数值
 export function isValidArrayIndex (val: any): boolean {
+  // 把val转化成服点数
   const n = parseFloat(String(val))
+  // Math.floor 向下取整数，
+  // isFinite  判断被传入的参数值是否为一个有限数值
   return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
@@ -215,6 +220,7 @@ export const bind = Function.prototype.bind
 /**
  * Convert an Array-like object to a real Array.
  */
+// 把 list 变成数组
 export function toArray (list: any, start?: number): Array<any> {
   start = start || 0
   let i = list.length - start

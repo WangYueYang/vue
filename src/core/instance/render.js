@@ -62,8 +62,10 @@ export function setCurrentRenderingInstance (vm: Component) {
 
 export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
+  // 给 Vue.prototype 上挂载一些运行时需要用到的工具方法 具体在 instalce/render-helpers 里
   installRenderHelpers(Vue.prototype)
 
+  // 将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新。
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)
   }
